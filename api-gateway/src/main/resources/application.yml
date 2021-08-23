@@ -1,0 +1,31 @@
+server:
+  port: 9191
+
+spring:
+  application:
+    name: API-GATEWAY
+  main:
+    web-application-type: reactive
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8888
+      discovery:
+        enabled: true
+        service-id: CONFIG-SERVER
+    gateway:
+      routes:
+        - id: MICROSERVICE-A
+          uri: lb://MICROSERVICE-A
+          predicates:
+            - Path=/microservice-a/**
+#          filters:
+#            - StripPrefix=1
+        - id: MICROSERVICE-B
+          uri: lb://MICROSERVICE-B
+          predicates:
+            - Path=/microservice-b/**
+#          filters:
+#            - StripPrefix=1
+  config:
+    import: optional:configserver:${spring.cloud.config.uri}
